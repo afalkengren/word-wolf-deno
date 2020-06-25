@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Word Wolf</title>
+        <script src="out/client_main.js"></script>
+    </head>
+    <body>
+        <h1>Word Wolf</h1>
+        <h2>Join a Lobby</h2>
+        <form action="/join" method="POST">
+            <label for="name">What's your name?</label>
+            <input type="text" id="name" value=""> <br>
+            <label for="roomid">Room ID:</label>
+            <input type="text" id="roomid" value=""> <br>
+            <input type="submit" value="Submit">
+        </form>
+        <h2>Create a Lobby</h2>
+        <form action="/create" method="POST">
+            <label for="name">What's your name?</label>
+            <input type="text" id="name" value="">
+            <input type="submit" value="Submit">
+        </form>
+    </body>
+</html>
