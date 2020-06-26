@@ -1,12 +1,6 @@
 
 let ws: WebSocket;
 
-// function messageDom(msg) {
-//   const div = document.createElement("li");
-//   div.className = "message";
-//   div.innerText = msg;
-//   return div;
-// }
 // const timeline = document.getElementById("timeline");
 // const sendButton = document.getElementById("sendButton");
 // sendButton.onclick = send;
