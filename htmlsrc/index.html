@@ -2,22 +2,21 @@
 <html>
     <head>
         <title>Word Wolf</title>
-        <script src="out/client_main.js"></script>
     </head>
     <body>
         <h1>Word Wolf</h1>
         <h2>Join a Lobby</h2>
         <form action="/join" method="POST">
             <label for="name">What's your name?</label>
-            <input type="text" id="name" required=true maxlength="30" placeholder="Input your name (max. 30 characters)"> <br>
+            <input type="text" name="name" id="name" required=true maxlength="30" placeholder="Input your name (max. 30 characters)"> <br>
             <label for="roomid">Room ID:</label>
-            <input type="text" id="roomid" required=true pattern="[0-9]{6}" placeholder="Enter your 6-digit code"> <br>
+            <input type="text" name="roomid" id="roomid" required=true pattern="[0-9]{6}" placeholder="Enter your 6-digit code"> <br>
             <input type="submit" value="Submit">
         </form>
         <h2>Create a Lobby</h2>
-        <form action="/create" method="POST">
+        <form action="/create" method="GET">
             <label for="name">What's your name?</label>
-            <input type="text" id="name" required=true maxlength="30" placeholder="Input your name (max. 30 characters)">
+            <input type="text" name="name" id="name" required=true maxlength="30" placeholder="Input your name (max. 30 characters)">
             <input type="submit" value="Submit">
         </form>
     </body>

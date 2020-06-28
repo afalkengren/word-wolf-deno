@@ -1,4 +1,6 @@
-import { v4 } from "https://deno.land/std/uuid/mod.ts";
+import Random from "https://deno.land/x/random/Random.js";
+import { v4 } from "https://deno.land/std/uuid/mod.ts"
+import { ServerRequest } from "https://deno.land/std/http/server.ts";
 import {
   acceptWebSocket,
   acceptable,
@@ -6,63 +8,118 @@ import {
   isWebSocketCloseEvent,
 } from "https://deno.land/std/ws/mod.ts";
 
-class Session {
-  id: string;
-  players = new Map<number, WebSocket>();
-  constructor(id: string) {
-    this.id = id;
+const rand = new Random();
+
+export class Player {
+  uuid: string;
+  ws: WebSocket;
+  roomid: string | undefined = undefined;
+  isConnected: boolean = true;
+  constructor(uuid: string, ws: WebSocket) {
+    this.uuid = uuid;
+    this.ws = ws;
+  }
+}
+
+export class Room {
+  uuid: string;
+  roomCode: number;
+  players = new Map<number, Player>();
+  constructor(id: string, roomCode: number) {
+    this.uuid = id;
+    this.roomCode = roomCode;
   }
 } 
 
 export class SessionHandler {
-  sessions = new Map<string, Session>();
-
-  joinSession(id: string): boolean {
-    if (!this.sessions.has(id)) return false;
-
+  static getInstance(): SessionHandler {
+    return this.singleton;
   }
 
-  createNewSession(): string {
-    const uuid = this.generateSessionID();
-    this.sessions.set(uuid, new Session(uuid));
-    return uuid;
+  /**
+   * Checks if a particular room exists 
+   * @returns A boolean, false if room doesn't exist
+   */
+  roomExists(roomId: string): boolean {
+    return this.roomIds.has(roomId);
   }
 
-  private generateSessionID(): string {
-    let uuid: string;
-    do {
-      uuid = v4.generate();
-    } while (this.sessions.has(uuid));
-    return uuid;
+  /**
+   * Return a particular room exists 
+   * @returns A room class
+   */
+  getRoom(roomId: string): Room | undefined {
+    return this.roomIds.get(roomId);
   }
-}
 
-/*
-if (req.url === "/ws") {
-  if (acceptable(req)) {
-    acceptWebSocket({
-      conn: req.conn,
-      bufReader: req.r,
-      bufWriter: req.w,
-      headers: req.headers,
-    }).then(wsHandler);
+  /**
+   * Return a particular room exists 
+   * @returns A room class
+   */
+  getRoom(roomCode: number): Room | undefined {
+    return this.roomCodes.get(roomCode);
   }
-  return;
-}
 
-async function wsHandler(ws: WebSocket): Promise<void> {
-  const id = ++clientId;
-  clients.set(id, ws);
-  dispatch(`Connected: [${id}]`);
-  for await (const msg of ws) {
-    console.log(`msg:${id}`, msg);
-    if (typeof msg === "string") {
-      dispatch(`[${id}]: ${msg}`);
-    } else if (isWebSocketCloseEvent(msg)) {
-      clients.delete(id);
-      dispatch(`Closed: [${id}]`);
-      break;
+  /**
+   * Attempts to join a particular room 
+   * @returns A boolean, false if room doesn't exist
+   */
+  joinRoom(roomId: string): boolean {
+    if (!this.roomExists(roomId)) return false;
+    return true;
+  }
+
+  createNewRoom(): Room {
+    const id = this.generateRoomID();
+    const code = this.generateRoomCode();
+    const room = new Room(id, code);
+    this.roomIds.set(id, room);
+    this.roomCodes.set(code, room);
+    return room;
+  }
+
+  establishWebSocket(req: ServerRequest) {
+    if (acceptable(req)) {
+      acceptWebSocket({
+        conn: req.conn,
+        bufReader: req.r,
+        bufWriter: req.w,
+        headers: req.headers,
+      }).then(this.wsHandler);
     }
   }
+  
+  async wsHandler(ws: WebSocket): Promise<void> {
+    const id = ++clientId;
+    clients.set(id, ws);
+    for await (const msg of ws) {
+      console.log(`msg:${id}`, msg);
+      if (typeof msg === "string") {
+      } else if (isWebSocketCloseEvent(msg)) {
+        clients.delete(id);
+        break;
+      }
+    }
+  }
+
+  private generateRoomID(): string {
+    let roomId: string;
+    do {
+      roomId = v4.generate();
+    } while (this.roomIds.has(roomId));
+    return roomId;
+  }
+
+  private generateRoomCode(): number {
+    let code: number;
+    do {
+      code = rand.int(0, 999999);
+    } while (this.roomCodes.has(code));
+    return code;
+  }
+
+  private constructor(){}
+  private roomIds = new Map<string, Room>();
+  private roomCodes = new Map<number, Room>();
+  private static singleton = new SessionHandler();
 }
-*/
