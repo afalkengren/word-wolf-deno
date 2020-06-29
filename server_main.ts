@@ -1,6 +1,7 @@
 import { listenAndServe, ServerRequest } from "https://deno.land/std/http/server.ts";
 import { fromFileUrl } from "https://deno.land/std/path/mod.ts";
 import { readFormData, readJoinForm } from "./request_handler.ts"
+import { SessionHandler } from "./session_handler.ts";
 
 const pageMap = new Map([
   ["/", "./htmlsrc/index.html"], 
@@ -9,6 +10,7 @@ const pageMap = new Map([
   ["/out/client_main.js", "./htmlsrc/out/client_main.js"],
 ]);
 
+const sessionHandler = SessionHandler.getInstance();
 
 function resolvePage(url: string): URL {
   console.log(`resolving ${url}`);
@@ -37,8 +39,7 @@ async function handlePOST(req: ServerRequest) {
 
 async function handleGET(req: ServerRequest) {
   if (req.url === "/ws") {
-    return req.respond({
-    });
+    sessionHandler.establishWebSocket(req);
   }
 
   if (req.url === "/favicon.ico") {

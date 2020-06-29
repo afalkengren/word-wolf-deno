@@ -43,21 +43,21 @@ export class SessionHandler {
   roomExists(roomId: string): boolean {
     return this.roomIds.has(roomId);
   }
-
+  
   /**
-   * Return a particular room exists 
-   * @returns A room class
+   * Return a room with id if exists 
+   * @returns A room object
    */
-  getRoom(roomId: string): Room | undefined {
-    return this.roomIds.get(roomId);
+  getRoomById(roomId: string): Room | undefined {
+    return this.roomIds.get(roomId as string);
   }
 
   /**
-   * Return a particular room exists 
-   * @returns A room class
+   * Return a room with code if exists 
+   * @returns A room object
    */
-  getRoom(roomCode: number): Room | undefined {
-    return this.roomCodes.get(roomCode);
+  getRoomByCode(roomCode: number): Room | undefined {
+    return this.roomCodes.get(roomCode as number);
   }
 
   /**
@@ -90,13 +90,13 @@ export class SessionHandler {
   }
   
   async wsHandler(ws: WebSocket): Promise<void> {
-    const id = ++clientId;
-    clients.set(id, ws);
+    //const id = ++clientId;
+    //clients.set(id, ws);
     for await (const msg of ws) {
-      console.log(`msg:${id}`, msg);
+      console.log(`msg:${msg}`);
       if (typeof msg === "string") {
       } else if (isWebSocketCloseEvent(msg)) {
-        clients.delete(id);
+        //clients.delete(id);
         break;
       }
     }
