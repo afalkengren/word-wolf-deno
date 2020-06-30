@@ -1,16 +1,19 @@
+let ws: WebSocket = new WebSocket(`ws://${location.host}/ws`);
 
-let ws: WebSocket;
+ws.addEventListener("open", (e: Event) => {
+  console.log("[WS] Opened");
+});
 
-function send() {
-  ws.send("");
-}
+ws.addEventListener("message", (e: MessageEvent) => {
+  console.log("[WS]: ", e.data);
+});
 
-function connect() {
-  if (ws) ws.close();
-  ws = new WebSocket(`ws://${location.host}/ws`);
-  ws.addEventListener("open", () => {
-    console.log("open", ws);
-  });
-}
-
-connect();
+ws.addEventListener("close", (e: CloseEvent) => {
+  if (e.wasClean) {
+    console.log(`[WS] Connection closed cleanly, code=${e.code} reason=${e.reason}`);
+  } else {
+    // e.g. server process killed or network down
+    // event.code is usually 1006 in this case
+    console.log('[WS] Connection died');
+  }
+});

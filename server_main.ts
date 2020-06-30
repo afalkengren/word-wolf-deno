@@ -39,7 +39,7 @@ async function handlePOST(req: ServerRequest) {
 
 async function handleGET(req: ServerRequest) {
   if (req.url === "/ws") {
-    sessionHandler.establishWebSocket(req);
+    return sessionHandler.establishWebSocket(req);
   }
 
   if (req.url === "/favicon.ico") {
