@@ -91,7 +91,7 @@ export class SessionHandler {
   }
   
   async wsHandler(ws: WebSocket): Promise<void> {
-    console.log("socket connected!");
+    console.log("ws:Connected");
     try {
       for await (const ev of ws) {
         if (typeof ev === "string") {

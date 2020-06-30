@@ -1,3 +1,4 @@
-htmlsrc/.vscode
-htmlsrc/out
 .vscode
+client/out
+client/.vscode
+client/html/scripts

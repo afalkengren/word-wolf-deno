@@ -5,66 +5,59 @@ import { SessionHandler } from "./session_handler.ts";
 
 const pageMap = new Map([
   ["/", "./htmlsrc/index.html"], 
-  ["/create?", "./htmlsrc/create.html"], 
-  ["/join?", "./htmlsrc/join.html"],
   ["/out/client_main.js", "./htmlsrc/out/client_main.js"],
 ]);
 
+const htmlDirURL = new URL("../client/html/", import.meta.url);
+
+const pageIndexFile = await Deno.open(fromFileUrl(new URL("index.html", htmlDirURL)));
+const pageJoinFile = await Deno.open(fromFileUrl(new URL("join.html", htmlDirURL)));
+const pageCreateFile = await Deno.open(fromFileUrl(new URL("create.html", htmlDirURL)));
+const mediaFavIcoFile = await Deno.open(fromFileUrl(new URL("media/favicon.ico", htmlDirURL)));
+const jsClientMainFile = await Deno.open(fromFileUrl(new URL("scripts/client_main.js", htmlDirURL)));
+
 const sessionHandler = SessionHandler.getInstance();
 
-function resolvePage(url: string): URL {
-  console.log(`resolving ${url}`);
-  let u = pageMap.get(url);
-  if(!u) u = "./htmlsrc/index.html";
-  return new URL(u, import.meta.url); 
+function respondToRequest(
+  req: ServerRequest, 
+  status: number, 
+  body: any, 
+  contentType: string = "text/html"
+): Promise<void> {
+  return req.respond({
+    status: status,
+    headers: new Headers({ "content-type": contentType }),
+    body: body,
+  });
 }
 
 async function handlePOST(req: ServerRequest) {
   switch(req.url) {
     case "/join":
       const joinDetails = await readJoinForm(req);
-      const u = new URL("./htmlsrc/join.html", import.meta.url);
-      const file = await Deno.open(fromFileUrl(u));
-      req.respond({
-        status: 200,
-        headers: new Headers({
-          "content-type": "text/html",
-        }),
-        body: file,
-      });
+      return respondToRequest(req, 200, pageJoinFile);
     default:
       break;
   }
 }
 
 async function handleGET(req: ServerRequest) {
-  if (req.url === "/ws") {
-    return sessionHandler.establishWebSocket(req);
+  switch(req.url) {
+    case "/ws":
+      return sessionHandler.establishWebSocket(req);
+    case "/favicon.ico":
+      return respondToRequest(req, 302, mediaFavIcoFile, "image/vnd.microsoft.icon");
+    case "/":
+      return respondToRequest(req, 200, pageIndexFile);
+    case "/main.js":
+      return respondToRequest(req, 200, jsClientMainFile, "text/javascript");
+    default:
+      return;
   }
-
-  if (req.url === "/favicon.ico") {
-    return req.respond({
-      status: 302,
-      headers: new Headers({
-        location: "https://deno.land/favicon.ico",
-      }),
-    });
-  }
-
-  let u = resolvePage(req.url);
-  console.log(`${req.url} => resolved to ${u}`);
-  const file = await Deno.open(fromFileUrl(u));
-  req.respond({
-    status: 200,
-    headers: new Headers({
-      "content-type": "text/html",
-    }),
-    body: file,
-  });
 }
 
 listenAndServe({ port: 8080 }, async (req) => {
-  console.log(`Got ${req.method} request with URL: ${req.url}`);
+  console.log(`${req.method}: ${req.url}`);
   switch(req.method) {
     case "GET":
       await handleGET(req);
@@ -77,4 +70,4 @@ listenAndServe({ port: 8080 }, async (req) => {
   }
 });
 
-console.log("Initialising server on :8080....");
+console.log("Initialising server on :8080");
