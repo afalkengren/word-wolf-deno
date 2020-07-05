@@ -1,4 +1,4 @@
-let ws: WebSocket = new WebSocket(`ws://${location.host}/ws`);
+let ws2: WebSocket = new WebSocket(`ws://${location.host}/ws`);
 
 ws.addEventListener("open", (e: Event) => {
   console.log("[WS] Opened");

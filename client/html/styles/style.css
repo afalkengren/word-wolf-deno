@@ -1,0 +1,69 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  height: 80%;
+  width: 100%;
+  margin: 0;
+}
+.container__game {
+  flex: 4 3 70%;
+  height: 100%;
+  border: 1px solid black;
+}
+.container__chat {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex: 0 0 30%;
+  border: 1px solid black;
+}
+
+.chat {
+  width: auto;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border: 0 none transparent;
+  flex-grow: 100;
+}
+
+.chat__message {
+  width: auto;
+  margin: 5px;
+  background-color: burlywood;
+  border: 0 none transparent;
+  padding: 4px;
+  border-radius: 5px;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: row;
+  height: 50px;
+  background: #ddd;
+}
+
+.input-container__text {
+  flex: 4 4 90%;
+  background: #eee;
+  border-radius: 5px;
+  width:20%;
+  height: 60%;
+  margin: 8px;
+  border: 1px solid black;
+  padding: 3px;
+  align-self: center;
+
+  font: small "calibri", sans-serif;
+}
+
+.input-container__send {
+  flex: 0 0 auto;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  background-color: blue;
+  align-self: center;
+  margin: 8px;
+}

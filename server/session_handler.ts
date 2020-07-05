@@ -16,6 +16,7 @@ export class Player {
   ws: WebSocket;
   roomid: string | undefined = undefined;
   isConnected: boolean = true;
+  room: Room | undefined;
   constructor(uuid: string, ws: WebSocket) {
     this.uuid = uuid;
     this.ws = ws;
@@ -91,7 +92,9 @@ export class SessionHandler {
   }
   
   async wsHandler(ws: WebSocket): Promise<void> {
-    console.log("ws:Connected");
+    const playerId: string = this.generatePlayerID();
+    console.log(`ws:Connected (${playerId})`);
+    
     try {
       for await (const ev of ws) {
         if (typeof ev === "string") {
@@ -120,6 +123,14 @@ export class SessionHandler {
     }
   }
 
+  private generatePlayerID(): string {
+    let uuid: string;
+    do {
+      uuid = v4.generate();
+    } while (this.playerIds.has(uuid));
+    return uuid;
+  }
+
   private generateRoomID(): string {
     let roomId: string;
     do {
@@ -139,5 +150,6 @@ export class SessionHandler {
   private constructor(){}
   private roomIds = new Map<string, Room>();
   private roomCodes = new Map<number, Room>();
+  private playerIds = new Map<string, Player>();
   private static singleton = new SessionHandler();
 }
