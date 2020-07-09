@@ -1,4 +1,4 @@
 .vscode
 client/out
 client/.vscode
-client/html/scripts
+client/scripts/*

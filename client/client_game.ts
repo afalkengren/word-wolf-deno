@@ -1,7 +1,10 @@
 import { WSMessage, WSMessageType, WSMessageDataChat, WSMessageData, WSMessageDataInit } from "../shared/ws_interfaces"
-const chatFlexBox = document.getElementById("chatbox");
-const chatSendBtn = document.getElementById("message-send");
-const chatMsgField = document.getElementById("message-box");
+
+const loadingText = document.getElementById("loading-text");
+const container = document.getElementById("container");
+const chatFlexBox = document.getElementById("chat-box");
+const chatSendBtn = document.getElementById("chat-input_send");
+const chatMsgField = document.getElementById("chat-input_textfield");
 
 let selfName: string = "";
 
@@ -34,6 +37,8 @@ function handleWebSocketMessage(e: MessageEvent) {
   switch (msg.type) {
     case WSMessageType.init:
       selfName = (msg.data as WSMessageDataInit).name;
+      loadingText.style.display = "none";
+      container.style.display = "flex";
       break;
     case WSMessageType.connect:
       break;  

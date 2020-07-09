@@ -1,33 +1,5 @@
-.container {
-  display: flex;
-  flex-direction: row;
-  height: 80%;
-  width: 100%;
-  margin: 0;
-}
-.container__game {
-  flex: 4 3 70%;
-  height: 100%;
-  border: 1px solid black;
-}
-.container__chat {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  flex: 0 0 30%;
-  border: 1px solid black;
-}
 
-.chat {
-  width: auto;
-  height: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  border: 0 none transparent;
-  flex-grow: 100;
-}
-
+/* Classes */
 .chat__message {
   width: auto;
   margin: 5px;
@@ -37,14 +9,45 @@
   border-radius: 5px;
 }
 
-.input-container {
+/* ID */
+#container {
+  display: none;
+  flex-direction: row;
+  height: 80%;
+  width: 100%;
+  margin: 0;
+}
+#container_game {
+  flex: 4 3 70%;
+  height: 100%;
+  border: 1px solid black;
+}
+#container_chat {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex: 0 0 30%;
+  border: 1px solid black;
+}
+
+#chat-box {
+  width: auto;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border: 0 none transparent;
+  flex-grow: 100;
+}
+
+#chat-input_container {
   display: flex;
   flex-direction: row;
   height: 50px;
   background: #ddd;
 }
 
-.input-container__text {
+#chat-input_textfield {
   flex: 4 4 90%;
   background: #eee;
   border-radius: 5px;
@@ -58,7 +61,7 @@
   font: small "calibri", sans-serif;
 }
 
-.input-container__send {
+#chat-input_send {
   flex: 0 0 auto;
   height: 30px;
   width: 30px;

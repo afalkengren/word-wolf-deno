@@ -2,26 +2,24 @@
     <head>
         <meta charset="UTF-8" />
         <title>Word Wolf</title>
-        <link rel="stylesheet" type="text/css" href="styles/style.css">
+        <link rel="stylesheet" type="text/css" href="styles/game.css">
+        <script type="text/javascript" src="scripts/shared/ws_interfaces.js"></script>
+        <script type="text/javascript" src="scripts/client/client_game.js"></script>
     </head>
     <body>
-        <h1>Word Wolf</h1>
-        <div class="container">
-          <div class="container__game">
-            123
-          </div>
-          <div class="container__chat">
-            <div class="chat" id="chatbox">
-              <div class="chat__message">1abcd</div>
-              <div class="chat__message">2abcd</div>
-              <div class="chat__message">3abcd</div>
-              <div class="chat__message">4abcd</div>
-            </div>
-            <div class="input-container">
-              <div class="input-container__text" id="message-box" contenteditable=""></div>
-              <div class="input-container__send" id="message-send"></div>
-            </div>
+      <h1>Word Wolf</h1>
+      <h2 id="loading-text">Joining a Lobby...</h2>
+      <div id="container">
+        <div id="container_game">
+          
+        </div>
+        <div id="container_chat">
+          <div id="chat-box"></div>
+          <div id="chat-input_container">
+            <div id="chat-input_textfield" contenteditable=""></div>
+            <div id="chat-input_send"></div>
           </div>
         </div>
+      </div>
     </body>
 </html>
