@@ -36,10 +36,8 @@ async function loadFilesInDir(baseUrl: string) {
       size: stat.size,
     };
     let key: string = filePath.path.substr(baseUrl.length);
-    if (key.startsWith("/")) key = key.substr(1);
     resFiles.set(key, fInfo);
   }
-  console.log(resFiles);
 }
 
 async function serveFile(
@@ -47,8 +45,10 @@ async function serveFile(
   status: number, 
   fileKey: string,
 ): Promise<void> {
-  if (!resFiles.has(fileKey)) 
+  if (!resFiles.has(fileKey)) {
+    console.log(`${fileKey} not found!`);
     return req.respond({ status: 404 });
+  }
   const fInfo = resFiles.get(fileKey)!;
   const body = await Deno.open(fInfo.path);
   req.done.then(() => { body.close() });
@@ -62,7 +62,7 @@ async function handlePOST(req: ServerRequest) {
   switch(req.url) {
     case "/join":
       //const joinDetails = await readJoinForm(req);
-      return serveFile(req, 200, "game.html");
+      return serveFile(req, 200, "/game.html");
     default:
       break;
   }
@@ -75,18 +75,16 @@ async function handleGET(req: ServerRequest) {
   console.log(urlComp);
   switch(urlComp[0]) {
     case "":
-      return serveFile(req, 200, htmlFiles.get("index.html"));
+      return serveFile(req, 200, "/index.html");
     case "favicon.ico":
-      return serveFile(req, 302, htmlFiles.get("media/favicon.ico"));
+      return serveFile(req, 302, "/media/favicon.ico");
     case "ws":
       return sessionHandler.establishWebSocket(req);
     case "scripts":
-      const p = req.url.substr("/scripts/".length);
-      return serveFile(req, 200, jsFiles.get(p));
     case "styles":
-      return serveFile(req, 200, "styles/" + htmlFiles.get(urlComp[1]));  
+      return serveFile(req, 200, req.url);  
     default:
-      return;
+      return serveFile(req, 200, req.url);
   }
 }
 
@@ -105,5 +103,6 @@ listenAndServe({ port: 8080 }, async (req) => {
 });
 
 console.log("Initialising server on :8080");
-loadFilesInDir("client/html/");
-loadFilesInDir("client/scripts/");
+await loadFilesInDir("client/html");
+await loadFilesInDir("client/scripts");
+console.log(resFiles);

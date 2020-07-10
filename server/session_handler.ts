@@ -87,7 +87,7 @@ export class SessionHandler {
         bufReader: req.r,
         bufWriter: req.w,
         headers: req.headers,
-      }).then(this.wsHandler);
+      }).then(this.wsHandler.bind(this));
     }
   }
   
