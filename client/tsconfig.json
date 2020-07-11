@@ -3,9 +3,9 @@
     "baseUrl": ".",
     "lib": ["es6", "dom"],
     "target": "es6",
-    "module": "system",
-    "outFile": "scripts/game.js",
+    "module": "esnext",
     "sourceMap": true,
     "isolatedModules": false,
+    "outDir": "scripts"
   }
 }

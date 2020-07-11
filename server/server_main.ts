@@ -19,6 +19,7 @@ const contentTypes = new Map<string, string>([
   [".js",   "application/javascript"],
   [".css",  "text/css"],
   [".ico", "image/vnd.microsoft.icon"],
+  [".ts", "application/javascript"],
 ]);
 
 const sessionHandler = SessionHandler.getInstance();
@@ -27,6 +28,14 @@ async function loadFilesInDir(baseUrl: string) {
   for await (const filePath of walk(baseUrl)) {
     if (!filePath.isFile) continue;
     const fUrl = fromFileUrl(new URL("../" + filePath.path, import.meta.url));
+    let duplicateFlag = false;
+    for (const [_, fInfo] of resFiles) {
+      if (fInfo.path == fUrl) {
+        duplicateFlag = true;
+        break;
+      }
+    }
+    if (duplicateFlag) continue;
     const ext = extname(filePath.path);
     const type: string = contentTypes.has(ext) ? contentTypes.get(ext)! : "";
     const stat = await Deno.stat(fUrl);
@@ -74,6 +83,7 @@ async function handlePOST(req: ServerRequest) {
       const joinDetails = await RequestHandler.readJoinForm(req);
       const res = await createServeFileResponse(req, 200, "/game.html");
       RequestHandler.setCookieHeader(res, "word-wolf_game-details", joinDetails);
+      req.respond(res);
     default:
       break;
   }
@@ -116,4 +126,5 @@ listenAndServe({ port: 8080 }, async (req) => {
 console.log("Initialising server on :8080");
 await loadFilesInDir("client/html");
 await loadFilesInDir("client/scripts");
+await loadFilesInDir("client");
 console.log(resFiles);

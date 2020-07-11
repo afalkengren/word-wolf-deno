@@ -9,6 +9,8 @@ import {
   isWebSocketPingEvent,
 } from "https://deno.land/std/ws/mod.ts";
 
+import { WSMessage, WSMessageType, WSMessageDataChat, WSMessageData, WSMessageDataInit } from "../shared/ws_interfaces.ts";
+
 const rand = new Random();
 
 export class Player {
@@ -93,25 +95,32 @@ export class SessionHandler {
   
   async wsHandler(ws: WebSocket): Promise<void> {
     const playerId: string = this.generatePlayerID();
-    console.log(`ws:Connected (${playerId})`);
-    
+    console.log(`[WS CONNECTED] (${playerId})`);
+    const wsInitMsg: WSMessage = { type: WSMessageType.init, data: { name: "Player" } };
+    await ws.send(JSON.stringify(wsInitMsg));
     try {
       for await (const ev of ws) {
         if (typeof ev === "string") {
-          // text message
-          console.log("ws:Text", ev);
-          await ws.send(ev);
-        } else if (ev instanceof Uint8Array) {
-          // binary message
-          console.log("ws:Binary", ev);
-        } else if (isWebSocketPingEvent(ev)) {
-          const [, body] = ev;
-          // ping
-          console.log("ws:Ping", body);
+          const wsMsg = JSON.parse(ev) as WSMessage;
+          switch (wsMsg.type) {
+            case WSMessageType.init:
+              console.log(`[WS INIT] (${playerId})`);
+              break;
+            case WSMessageType.connect:
+              console.log(`[WS CONN] (${playerId})`);
+              break;
+            case WSMessageType.chat:
+              const wsMsgData = wsMsg.data as WSMessageDataChat;
+              console.log(`[WS CHAT] (${playerId}) ${wsMsgData.from}: ${wsMsgData.body}`);
+              break;
+            default:
+              console.log(`[WS UNKNOWN!] (${playerId}) `, wsMsg);
+              break;
+          }
         } else if (isWebSocketCloseEvent(ev)) {
           // close
           const { code, reason } = ev;
-          console.log("ws:Close", code, reason);
+          console.log("[WS CLOSE]", code, reason);
         }
       }
     } catch (err) {
