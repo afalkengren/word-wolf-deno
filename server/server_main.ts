@@ -1,6 +1,6 @@
-import { listenAndServe, ServerRequest } from "https://deno.land/std/http/server.ts";
+import { listenAndServe, ServerRequest, Response } from "https://deno.land/std/http/server.ts";
 import { fromFileUrl, extname } from "https://deno.land/std/path/mod.ts";
-import { readFormData, readJoinForm } from "./request_handler.ts"
+import * as RequestHandler from "./request_handler.ts"
 import { SessionHandler } from "./session_handler.ts";
 import { walk } from "https://deno.land/std/fs/mod.ts";
 
@@ -40,14 +40,14 @@ async function loadFilesInDir(baseUrl: string) {
   }
 }
 
-async function serveFile(
+async function createServeFileResponse(
   req: ServerRequest, 
   status: number, 
   fileKey: string,
-): Promise<void> {
+): Promise<Response> {
   if (!resFiles.has(fileKey)) {
     console.log(`${fileKey} not found!`);
-    return req.respond({ status: 404 });
+    return { status: 404 } as Response;
   }
   const fInfo = resFiles.get(fileKey)!;
   const body = await Deno.open(fInfo.path);
@@ -55,14 +55,25 @@ async function serveFile(
   const headers = new Headers();
   headers.set("content-type", fInfo.contentType);
   headers.set("content-size", String(fInfo.size));
-  return req.respond({ status, headers, body });
+  return { status, headers, body };
+}
+
+// helper function
+async function serveFile(
+  req: ServerRequest, 
+  status: number, 
+  fileKey: string,
+): Promise<void> {
+  const res = await createServeFileResponse(req, status, fileKey);
+  return req.respond(res);
 }
 
 async function handlePOST(req: ServerRequest) {
   switch(req.url) {
     case "/join":
-      //const joinDetails = await readJoinForm(req);
-      return serveFile(req, 200, "/game.html");
+      const joinDetails = await RequestHandler.readJoinForm(req);
+      const res = await createServeFileResponse(req, 200, "/game.html");
+      RequestHandler.setCookieHeader(res, "word-wolf_game-details", joinDetails);
     default:
       break;
   }

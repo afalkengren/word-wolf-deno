@@ -1,4 +1,4 @@
-import { WSMessage, WSMessageType, WSMessageDataChat, WSMessageData, WSMessageDataInit } from "../shared/ws_interfaces"
+import { WSMessage, WSMessageType, WSMessageDataChat, WSMessageData, WSMessageDataInit } from "../shared/ws_interfaces";
 
 const loadingText = document.getElementById("loading-text");
 const container = document.getElementById("container");
