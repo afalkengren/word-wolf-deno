@@ -27,6 +27,6 @@ export async function readJoinForm(req: ServerRequest): Promise<JoinRequest> {
 
 export function setCookieHeader(res: Response, name: string, anyVal: any) {
   const value: string = (typeof anyVal === 'string') ? anyVal : JSON.stringify(anyVal);
-  const cookie: Cookie.Cookie = { name, value };
+  const cookie: Cookie.Cookie = { name, value, sameSite: "Lax" };
   Cookie.setCookie(res, cookie);
 }

@@ -82,7 +82,7 @@ async function handlePOST(req: ServerRequest) {
     case "/join":
       const joinDetails = await RequestHandler.readJoinForm(req);
       const res = await createServeFileResponse(req, 200, "/game.html");
-      RequestHandler.setCookieHeader(res, "word-wolf_game-details", joinDetails);
+      RequestHandler.setCookieHeader(res, "word-wolf_details", joinDetails);
       req.respond(res);
     default:
       break;
