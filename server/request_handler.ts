@@ -2,10 +2,11 @@ import { ServerRequest, Response } from "https://deno.land/std/http/server.ts";
 import * as Cookie from "https://deno.land/std/http/cookie.ts";
 
 const decoder = new TextDecoder('utf-8');
+const cookieName = "WordWolf_SessionID";
 
-export interface JoinRequest {
-  roomId: string | undefined;
-  name: string | undefined;
+export interface LobbyForm {
+  name: string;
+  roomCode: number | undefined;
 }
 
 export async function readFormData(req: ServerRequest): Promise<Map<string, string>> {
@@ -20,13 +21,25 @@ export async function readFormData(req: ServerRequest): Promise<Map<string, stri
   return formData;
 }
 
-export async function readJoinForm(req: ServerRequest): Promise<JoinRequest> {
+export async function readLobbyForm(req: ServerRequest): Promise<LobbyForm> {
   const formData = await readFormData(req);
-  return { roomId: formData.get("roomid"), name: formData.get("name") };
+  return { 
+    name: formData.get("name") ?? "Player", 
+    roomCode: Number(formData.get("roomcode"))
+  };
 }
 
-export function setCookieHeader(res: Response, name: string, anyVal: any) {
-  const value: string = (typeof anyVal === 'string') ? anyVal : JSON.stringify(anyVal);
-  const cookie: Cookie.Cookie = { name, value };
+export function setSessionCookie(res: Response, sessionId: string) {
+  const cookie: Cookie.Cookie = { name: cookieName, value: sessionId };
   Cookie.setCookie(res, cookie);
 }
+
+export function getSessionCookie(req: ServerRequest): string | undefined {
+  return Cookie.getCookies(req)[cookieName];
+}
+
+// export function setCookieHeader(res: Response, name: string, anyVal: any) {
+//   const value: string = (typeof anyVal === 'string') ? anyVal : JSON.stringify(anyVal);
+//   const cookie: Cookie.Cookie = { name, value };
+//   Cookie.setCookie(res, cookie);
+// }

@@ -9,6 +9,11 @@ export interface WSMessageData {
 
 export interface WSMessageDataInit extends WSMessageData {
   name: string;
+  roomCode: number;
+}
+
+export interface WSMessageDataConn extends WSMessageData {
+  roomCode: number;
 }
 
 export interface WSMessageDataChat extends WSMessageData {

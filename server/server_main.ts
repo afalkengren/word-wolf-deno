@@ -1,7 +1,7 @@
 import { listenAndServe, ServerRequest, Response } from "https://deno.land/std/http/server.ts";
 import { fromFileUrl, extname } from "https://deno.land/std/path/mod.ts";
 import * as RequestHandler from "./request_handler.ts"
-import { SessionHandler } from "./session_handler.ts";
+import { SessionHandler, Room } from "./session_handler.ts";
 import { walk } from "https://deno.land/std/fs/mod.ts";
 
 // name -> filepath
@@ -77,16 +77,26 @@ async function serveFile(
   return req.respond(res);
 }
 
-async function handlePOST(req: ServerRequest) {
-  switch(req.url) {
-    case "/join":
-      const joinDetails = await RequestHandler.readJoinForm(req);
-      const res = await createServeFileResponse(req, 200, "/game.html");
-      RequestHandler.setCookieHeader(res, "word-wolf_game-details", joinDetails);
-      req.respond(res);
-    default:
-      break;
+async function handleForm(req: ServerRequest) {
+  const formDetail = await RequestHandler.readLobbyForm(req);
+  let room: Room;
+
+  if (req.url == "/join") {
+    console.log(`[JOIN] Attempt to join room ${formDetail.roomCode}`)
+    if (!formDetail.roomCode || !sessionHandler.roomCodeExists(formDetail.roomCode)) {
+      return serveFile(req, 404, "/invalid_room.html"); // TODO something
+    }
+    room = sessionHandler.getRoomByCode(formDetail.roomCode)!;
+  } else { // url == "/create"
+    room = sessionHandler.createNewRoom();
   }
+
+  const session = sessionHandler.createNewSession(formDetail.name);
+  session.room = room;
+  room.players.set(session.id, session);
+  const res = await createServeFileResponse(req, 200, "/game.html");
+  RequestHandler.setSessionCookie(res, session.id);
+  req.respond(res);
 }
 
 async function handleGET(req: ServerRequest) {
@@ -100,7 +110,12 @@ async function handleGET(req: ServerRequest) {
     case "favicon.ico":
       return serveFile(req, 302, "/media/favicon.ico");
     case "ws":
-      return sessionHandler.establishWebSocket(req);
+      const sessionId = RequestHandler.getSessionCookie(req);
+      if (sessionId) {
+        return sessionHandler.connectWebSocketToSession(req, sessionId);
+      } else {
+        return req.respond({ status: 403 });
+      }
     case "scripts":
     case "styles":
       return serveFile(req, 200, req.url);  
@@ -116,7 +131,8 @@ listenAndServe({ port: 8080 }, async (req) => {
       await handleGET(req);
       break;
     case "POST":
-      await handlePOST(req);
+      // this should be the case 100% of the time
+      await handleForm(req);
       break;
     default:
       break;

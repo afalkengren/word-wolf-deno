@@ -6,6 +6,7 @@
     <body>
         <h1>Word Wolf</h1>
         <h2>Join a Lobby</h2>
+        <b style="color:red">Sorry, the room could not be found. Please try again.</b>
         <form action="/join" method="POST">
             <label for="name">What's your name?</label>
             <input type="text" name="name" id="name" required=true maxlength="30" placeholder="Input your name (max. 30 characters)"> <br>
@@ -14,7 +15,7 @@
             <input type="submit" value="Submit">
         </form>
         <h2>Create a Lobby</h2>
-        <form action="/create" method="POST">
+        <form action="/create" method="GET">
             <label for="name">What's your name?</label>
             <input type="text" name="name" id="name" required=true maxlength="30" placeholder="Input your name (max. 30 characters)">
             <input type="submit" value="Submit">

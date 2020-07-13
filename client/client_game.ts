@@ -11,6 +11,7 @@ interface WSMessageData {
 
 interface WSMessageDataInit extends WSMessageData {
   name: string;
+  roomCode: number;
 }
 
 interface WSMessageDataChat extends WSMessageData {
@@ -24,7 +25,6 @@ interface WSMessage {
   data: WSMessageData;
 }
 
-let loadingText: HTMLDivElement;
 let container: HTMLDivElement;
 let chatFlexBox: HTMLDivElement;
 let chatSendBtn: HTMLDivElement;
@@ -62,8 +62,10 @@ function handleWebSocketMessage(e: MessageEvent) {
   switch (msg.type) {
     case WSMessageType.init:
       console.log("[WS INIT]:", e.data);
-      selfName = (msg.data as WSMessageDataInit).name;
-      loadingText.style.display = "none";
+      const initData = msg.data as WSMessageDataInit;
+      selfName = initData.name;
+      document.getElementById("room-code").innerText = String(initData.roomCode);
+      document.getElementById("loading-text").style.display = "none";
       container.style.display = "flex";
       break;
     case WSMessageType.connect:
@@ -84,7 +86,6 @@ function handleWebSocketMessage(e: MessageEvent) {
 // init events
 
 function initOnPageLoad() {
-  loadingText = document.getElementById("loading-text") as HTMLDivElement;
   container = document.getElementById("container") as HTMLDivElement;
   chatFlexBox = document.getElementById("chat-box") as HTMLDivElement;
   chatSendBtn = document.getElementById("chat-input_send") as HTMLDivElement;
@@ -113,6 +114,8 @@ function addMessage(msg: ChatMessage) {
 function addMessageToDOM(id: string, msg: string): HTMLDivElement {
   let msgDiv = document.createElement("div") as HTMLDivElement;
   msgDiv.setAttribute("id", id);
+  msgDiv.setAttribute("class", "chat__message");
+  msgDiv.innerText = msg;
   chatFlexBox.appendChild(msgDiv);
   return msgDiv;
 }
