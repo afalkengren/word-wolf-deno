@@ -77,6 +77,7 @@ async function serveFile(
   return req.respond(res);
 }
 
+<<<<<<< HEAD
 async function handleForm(req: ServerRequest) {
   const formDetail = await RequestHandler.readLobbyForm(req);
   let room: Room;
@@ -89,6 +90,17 @@ async function handleForm(req: ServerRequest) {
     room = sessionHandler.getRoomByCode(formDetail.roomCode)!;
   } else { // url == "/create"
     room = sessionHandler.createNewRoom();
+=======
+async function handlePOST(req: ServerRequest) {
+  switch(req.url) {
+    case "/join":
+      const joinDetails = await RequestHandler.readJoinForm(req);
+      const res = await createServeFileResponse(req, 200, "/game.html");
+      RequestHandler.setCookieHeader(res, "word-wolf_details", joinDetails);
+      req.respond(res);
+    default:
+      break;
+>>>>>>> cfc42c7b4424c3daf7516dd0e4f2a98df54a978b
   }
 
   const session = sessionHandler.createNewSession(formDetail.name);

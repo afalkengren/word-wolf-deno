@@ -30,7 +30,7 @@ export async function readLobbyForm(req: ServerRequest): Promise<LobbyForm> {
 }
 
 export function setSessionCookie(res: Response, sessionId: string) {
-  const cookie: Cookie.Cookie = { name: cookieName, value: sessionId };
+  const cookie: Cookie.Cookie = { name: cookieName, value: sessionId, sameSite: "Lax" };
   Cookie.setCookie(res, cookie);
 }
 
