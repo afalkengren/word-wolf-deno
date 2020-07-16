@@ -124,7 +124,7 @@ async function handleGET(req: ServerRequest) {
   }
 }
 
-listenAndServe({ port: 8080 }, async (req) => {
+listenAndServe({ port: 80 }, async (req) => {
   console.log(`${req.method}: ${req.url}`);
   switch(req.method) {
     case "GET":

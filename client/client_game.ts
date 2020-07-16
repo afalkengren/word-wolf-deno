@@ -53,7 +53,7 @@ class ChatMessage {
 const chatMessages = new Map<number, ChatMessage>();
 
 // Websocket
-const ws: WebSocket = new WebSocket(`ws://${location.host}/ws`);
+const ws: WebSocket = new WebSocket(`wss://${location.host}/ws`);
 
 ws.addEventListener("message", handleWebSocketMessage);
 
