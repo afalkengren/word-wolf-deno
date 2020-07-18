@@ -4,6 +4,8 @@ import * as RequestHandler from "./request_handler.ts"
 import { SessionHandler, Room } from "./session_handler.ts";
 import { walk } from "https://deno.land/std/fs/mod.ts";
 
+const SERV_PORT = 8080;
+
 // name -> filepath
 interface FileInfo {
   path: string;
@@ -124,7 +126,7 @@ async function handleGET(req: ServerRequest) {
   }
 }
 
-listenAndServe({ port: 80 }, async (req) => {
+listenAndServe({ port: SERV_PORT }, async (req) => {
   console.log(`${req.method}: ${req.url}`);
   switch(req.method) {
     case "GET":
@@ -139,7 +141,7 @@ listenAndServe({ port: 80 }, async (req) => {
   }
 });
 
-console.log("Initialising server on :8080");
+console.log("Initialising server on :", SERV_PORT);
 await loadFilesInDir("client/html");
 await loadFilesInDir("client/scripts");
 await loadFilesInDir("client");

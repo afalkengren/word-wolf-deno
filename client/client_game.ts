@@ -4,6 +4,7 @@ enum WSMessageType {
   init,
   connect,
   chat,
+  game,
 }
 
 interface WSMessageData {
@@ -18,6 +19,10 @@ interface WSMessageDataChat extends WSMessageData {
   id: number;
   from: string;
   body: string;
+}
+
+interface WSMessageDataGame extends WSMessageData {
+  word?: string;
 }
 
 interface WSMessage {
@@ -53,8 +58,13 @@ class ChatMessage {
 const chatMessages = new Map<number, ChatMessage>();
 
 // Websocket
-const ws: WebSocket = new WebSocket(`wss://${location.host}/ws`);
+const ws: WebSocket = new WebSocket(`ws://${location.host}/ws`);
+// ws.addEventListener("error", (ev) => {
+//   const errorMessage = document.createElement("span");
+//   errorMessage.style.display = "block";
+//   errorMessage.innerHTML = `An error occurred: ${ev}`;
 
+// });
 ws.addEventListener("message", handleWebSocketMessage);
 
 function handleWebSocketMessage(e: MessageEvent) {

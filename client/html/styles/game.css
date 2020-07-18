@@ -5,8 +5,26 @@
   margin: 5px;
   background-color: burlywood;
   border: 0 none transparent;
-  padding: 4px;
+  padding: 4px 8px;
   border-radius: 5px;
+}
+
+.chat__message::before {
+  content: "dobby";
+  position: relative;
+  top: -30px;
+  z-index: 30;
+  display: initial;
+  width: 0;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+/* timestamp */
+.chat__message::after {
+  content: attr(data-time);
+  float: right;
+  font-size: small;
 }
 
 /* ID */
@@ -38,6 +56,7 @@
   justify-content: flex-end;
   border: 0 none transparent;
   flex-grow: 100;
+  overflow-y: auto;
 }
 
 #chat-input_container {
@@ -69,4 +88,18 @@
   background-color: blue;
   align-self: center;
   margin: 8px;
+}
+
+/* CANVAS */
+.canvas {
+  width: auto;
+  height: auto;
+}
+
+.canvas-bg {
+
+}
+
+.canvas-fg {
+
 }
