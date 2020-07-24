@@ -63,4 +63,15 @@ export class Queue<T> extends LinkedList<T> {
   public enqueue(data: T): number {
     return this.append({ next: null, data });
   }
+
+  // replace with private members override
+  private insert(item: LinkedItem<T>, at: number) {
+    return super.insert(item, at);
+  }
+  private remove(at: number): LinkedItem<T> {
+    return super.remove(at);
+  }
+  private append(item: LinkedItem<T>): number {
+    return super.append(item);
+  }
 }
