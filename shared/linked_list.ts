@@ -1,50 +1,58 @@
-interface LinkedItem<T> {
-  next: LinkedItem<T> | null;
+export interface LinkedNode<T> {
+  next?: LinkedNode<T>;
   data: T;
 }
 
-export class LinkedList<T> {
-  public head: LinkedItem<T>;
-  public tail: LinkedItem<T>;
-  public length: number;
+type LinkedNodeOpt<T> = LinkedNode<T> | undefined;
 
-  public append(item: LinkedItem<T>): number {
-    this.tail.next = item;
+export class LinkedList<T> {
+  public head?: LinkedNode<T>;
+  readonly tail?: LinkedNode<T>;
+  public length: number = 0;
+
+  public append(newNode: LinkedNode<T>): number {
+    this.tail.next = newNode;
     this.length += 1;
     return this.length;
   }
 
-  public insert(item: LinkedItem<T>, at: number) {
-    let prevNode: LinkedItem<T> = null;
-    let node: LinkedItem<T> = this.head;
-    // traverse linked list
-    for (let i = 0; i < Math.min(at, this.length); ++i) {
-      prevNode = node;
-      node = node.next;
+  public insert(newNode: LinkedNode<T>, at: number) {
+    if (this.length === 0) {
+      this.head = newNode;
+      return;
     }
-    if (prevNode === null) {
-      this.head = item;
+    const { prevNode, currNode } = this.walkList(at);
+    if (prevNode === undefined) {
+      this.head = newNode;
     } else {
-      prevNode.next = item;
+      prevNode.next = newNode;
     }
-    item.next = node;
+    newNode.next = currNode;
   }
 
-  public remove(at: number): LinkedItem<T> {
-    let prevNode: LinkedItem<T> = null;
-    let node: LinkedItem<T> = this.head;
-    // traverse linked list
-    for (let i = 0; i < Math.min(at, this.length); ++i) {
-      prevNode = node;
-      node = node.next;
-    }
-    if (prevNode === null) {
-      this.head = node.next;
+  public remove(at: number): LinkedNodeOpt<T> {
+    const { prevNode, currNode } = this.walkList(at);
+    if (prevNode === undefined) {
+      if (currNode === undefined) { return undefined; }
+      this.head = currNode.next;
     } else {
-      prevNode.next = node.next;
+      // if end of list, currNode?.next = undefined
+      prevNode.next = currNode?.next;
     }
-    node.next = null;
-    return node;
+    delete currNode?.next; // remove reference to next
+    return currNode;
+  }
+
+  private walkList(until: number): { prevNode: LinkedNodeOpt<T>, currNode: LinkedNodeOpt<T> } {
+    let prevNode: LinkedNodeOpt<T> = undefined;
+    let currNode: LinkedNodeOpt<T> = this.head;
+
+    // traverse linked list
+    for (let i = 0; i < Math.min(until, this.length); ++i) {
+      prevNode = currNode;
+      currNode = currNode?.next;
+    }
+    return { prevNode, currNode };
   }
 }
 
@@ -61,6 +69,7 @@ export class Queue<T> extends LinkedList<T> {
   }
 
   public enqueue(data: T): number {
-    return this.append({ next: null, data });
+    return this.append({ next: undefined, data });
   }
 }
+

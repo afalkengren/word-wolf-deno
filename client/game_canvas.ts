@@ -13,15 +13,15 @@ export interface RenderItem {
 export class GameCanvas extends HTMLDivElement {
   public constructor() {
     super();
-    this._canvasBG.setAttribute("class", "canvas canvas-bg");
-    this._canvasFG.setAttribute("class", "canvas canvas-fg");
-    this.appendChild(this._canvasBG);
-    this.appendChild(this._canvasFG);
+    this.canvasBG.setAttribute("class", "canvas canvas-bg");
+    this.canvasFG.setAttribute("class", "canvas canvas-fg");
+    this.appendChild(this.canvasBG);
+    this.appendChild(this.canvasFG);
   }
   
   public stop() {
-    while (this._animFrameCBs.length > 0) {
-      const cbId = this._animFrameCBs.pop();
+    while (this.animFrameCBs.length > 0) {
+      const cbId = this.animFrameCBs.pop();
       if (cbId == undefined) break; // probably not necessary due to evloop js
       window.cancelAnimationFrame(cbId);
     }
@@ -30,30 +30,25 @@ export class GameCanvas extends HTMLDivElement {
   public start() {
     const cb: FrameRequestCallback = this.renderFrame.bind(this);
     const cbId = window.requestAnimationFrame(cb);
-    this._animFrameCBs.push(cbId);
+    this.animFrameCBs.push(cbId);
   }
-  
-  // Public getters for protected/private properties
-  public get renderQueue() { return this._renderQueue; }
-  public get getBgContext() { return this._ctxBG; }
-  public get getFgContext() { return this._ctxFG; }
 
-  // Protected members
-  protected _canvasBG = new HTMLCanvasElement();
-  protected _canvasFG = new HTMLCanvasElement();
-  protected _ctxBG = this._canvasBG.getContext("2d");
-  protected _ctxFG = this._canvasFG.getContext("2d");
-  protected _renderQueue = new Queue<RenderItem>();
+  // Read-only members
+  readonly canvasBG = new HTMLCanvasElement();
+  readonly canvasFG = new HTMLCanvasElement();
+  readonly ctxBG = this.canvasBG.getContext("2d");
+  readonly ctxFG = this.canvasFG.getContext("2d");
+  readonly renderQueue = new Queue<RenderItem>();
 
   // Private members
-  private _animFrameCBs = new Array<number>();
+  private animFrameCBs = new Array<number>();
   private renderFrame(ts: DOMHighResTimeStamp) {
     let renderItem: RenderItem;
-    if (renderItem = this._renderQueue.dequeue()) {
+    if (renderItem = this.renderQueue.dequeue()) {
       renderItem.cb(ts, renderItem.ctx);
     }
     const cb: FrameRequestCallback = this.renderFrame.bind(this);
     const cbId = window.requestAnimationFrame(cb);
-    this._animFrameCBs.push(cbId);
+    this.animFrameCBs.push(cbId);
   }
 }

@@ -34,6 +34,8 @@ let container: HTMLDivElement;
 let chatFlexBox: HTMLDivElement;
 let chatSendBtn: HTMLDivElement;
 let chatMsgField: HTMLDivElement;
+let roomCodeElem: HTMLSpanElement;
+let loadingTextElem: HTMLElement;
 
 document.addEventListener('DOMContentLoaded', initOnPageLoad.bind(this))
 
@@ -74,8 +76,8 @@ function handleWebSocketMessage(e: MessageEvent) {
       console.log("[WS INIT]:", e.data);
       const initData = msg.data as WSMessageDataInit;
       selfName = initData.name;
-      document.getElementById("room-code").innerText = String(initData.roomCode);
-      document.getElementById("loading-text").style.display = "none";
+      roomCodeElem.innerText = String(initData.roomCode);
+      loadingTextElem.style.display = "none";
       container.style.display = "flex";
       break;
     case WSMessageType.connect:
@@ -96,15 +98,17 @@ function handleWebSocketMessage(e: MessageEvent) {
 // init events
 
 function initOnPageLoad() {
-  container = document.getElementById("container") as HTMLDivElement;
-  chatFlexBox = document.getElementById("chat-box") as HTMLDivElement;
-  chatSendBtn = document.getElementById("chat-input_send") as HTMLDivElement;
-  chatMsgField = document.getElementById("chat-input_textfield") as HTMLDivElement;
+  container = document.getElementById("container")! as HTMLDivElement;
+  chatFlexBox = document.getElementById("chat-box")! as HTMLDivElement;
+  chatSendBtn = document.getElementById("chat-input_send")! as HTMLDivElement;
+  chatMsgField = document.getElementById("chat-input_textfield")! as HTMLDivElement;
+  roomCodeElem = document.getElementById("room-code")! as HTMLSpanElement;
+  loadingTextElem = document.getElementById("loading-text")!;
 
   chatSendBtn.addEventListener("click", sendButtonClick)
 }
 
-function sendButtonClick(this: HTMLElement, ev: MouseEvent) {
+function sendButtonClick(this: HTMLElement, _: MouseEvent) {
   const text = chatMsgField.innerText;
   chatMsgField.innerText = "";
   sendMessage(text);
