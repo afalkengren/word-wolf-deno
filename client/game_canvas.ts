@@ -1,8 +1,14 @@
 import { Queue } from "../shared/linked_list";
 
 export interface RenderContext {
-  start: DOMHighResTimeStamp;
-  end: DOMHighResTimeStamp;
+  start?: DOMHighResTimeStamp;
+  end?: DOMHighResTimeStamp;
+  duration: number;
+  ctx: { 
+    fg?: CanvasRenderingContext2D, 
+    bg?: CanvasRenderingContext2D 
+  };
+  data: any;
 }
 
 export interface RenderItem {
