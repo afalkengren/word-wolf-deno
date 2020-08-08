@@ -133,3 +133,13 @@ function addMessageToDOM(id: string, msg: string): HTMLDivElement {
   chatFlexBox.appendChild(msgDiv);
   return msgDiv;
 }
+
+// temp design before canvas work is finished
+function showWord(id: string, msg: string): HTMLDivElement {
+  let msgDiv = document.createElement("div") as HTMLDivElement;
+  msgDiv.setAttribute("id", id);
+  msgDiv.setAttribute("class", "chat__message");
+  msgDiv.innerText = msg;
+  chatFlexBox.appendChild(msgDiv);
+  return msgDiv;
+}

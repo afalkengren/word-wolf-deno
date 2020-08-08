@@ -7,12 +7,14 @@
     "sourceMap": true,
     "isolatedModules": false,
     "outDir": "scripts",
-
     // compiler checks
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-  }
+  },
+  "files": [
+    "client_game.ts",
+  ],
 }

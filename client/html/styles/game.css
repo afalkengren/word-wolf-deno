@@ -39,6 +39,10 @@
   flex: 4 3 70%;
   height: 100%;
   border: 1px solid black;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 #container_chat {
   display: flex;
